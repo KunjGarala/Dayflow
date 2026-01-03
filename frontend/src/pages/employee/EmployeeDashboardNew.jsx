@@ -115,10 +115,12 @@ const EmployeeDashboardNew = () => {
             )}
           </div>
 
-          {/* Right Sidebar - Check-In/Out Panel */}
-          <div className="lg:col-span-1">
-            <CheckInOutPanel />
-          </div>
+
+          {user?.role === "EMPLOYEE" && (
+            <div className="lg:col-span-1">
+              <CheckInOutPanel />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -126,4 +128,3 @@ const EmployeeDashboardNew = () => {
 };
 
 export default EmployeeDashboardNew;
-
