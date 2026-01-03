@@ -58,6 +58,7 @@ public class EmployeeService {
         employee.setCreatedBy(hrUser);
         employee.setFirstName(request.getFirstName());
         employee.setLastName(request.getLastName());
+        employee.setPassword("12345678");
 
         // Generate employee ID
         String employeeId = employeeIdGenerator.generateEmployeeId(
@@ -73,8 +74,8 @@ public class EmployeeService {
         return employeeMapper.toResponse(savedEmployee);
     }
 
-    public List<EmployeeResponse> getEmployeesByHr(Long hrId) {
-        HrUser hrUser = hrRepository.findById(hrId)
+    public List<EmployeeResponse> getEmployeesByHr(String hrEmail) {
+        HrUser hrUser = hrRepository.findByEmail(hrEmail)
                 .orElseThrow(() -> new ApiException("HR user not found"));
 
         List<Employee> employees = employeeRepository.findByCreatedBy(hrUser);
