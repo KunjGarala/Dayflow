@@ -20,7 +20,9 @@ public class LoginResponse {
     public static class UserInfo {
         private Long id;
         private String identifier; // email or employeeId
-        private String name;
+        private String firstName;
+        private String lastName;
+        private String avatar;
         private String role; // HR or EMPLOYEE
         private String companyName;
         private String companyAvatar; // For HR only
@@ -34,7 +36,7 @@ public class LoginResponse {
         UserInfo userInfo = new UserInfo();
         userInfo.setId(hrUser.getId());
         userInfo.setIdentifier(hrUser.getEmail());
-        userInfo.setName(hrUser.getName());
+        userInfo.setFirstName(hrUser.getName());
         userInfo.setRole("HR");
         userInfo.setCompanyName(hrUser.getCompanyName());
         userInfo.setCompanyAvatar(hrUser.getCompanyAvatar());
@@ -46,7 +48,8 @@ public class LoginResponse {
         UserInfo userInfo = new UserInfo();
         userInfo.setId(employee.getId());
         userInfo.setIdentifier(employee.getEmail());
-        userInfo.setName(employee.getName());
+        userInfo.setFirstName(employee.getFirstName());
+        userInfo.setLastName(employee.getLastName());
         userInfo.setRole("EMPLOYEE");
         userInfo.setCompanyName(employee.getCompany());
         userInfo.setCompanyAvatar(employee.getCompanyAvatar());

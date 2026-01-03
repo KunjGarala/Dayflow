@@ -12,7 +12,9 @@ import java.time.LocalDateTime;
 public class EmployeeResponse {
     private Long id;
     private String employeeId;
-    private String name;
+    private String firstName;
+    private String lastName;
+    private String fullName; // Computed field for convenience
     private String jobPosition;
     private String email;
     private String mobile;

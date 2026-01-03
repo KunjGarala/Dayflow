@@ -24,7 +24,12 @@ public class Employee {
     private String employeeId; // Custom generated ID
 
     @Column(nullable = false)
-    private String name;
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
+    private String avatar;
 
     private String password;
 
