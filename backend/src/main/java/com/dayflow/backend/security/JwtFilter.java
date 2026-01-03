@@ -34,7 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 String token = authHeader.substring(7);
 
                 // Extract userId and role from JWT
-                String userId = jwtUtils.extractUsername(token);
+                Long userId = jwtUtils.extractUserId(token);
                 String userRole = jwtUtils.extractRole(token);
 
                 if (userId != null && userRole != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -45,7 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
                         // Create authentication with userId as principal and role as authority
                         UsernamePasswordAuthenticationToken authentication =
-                                new UsernamePasswordAuthenticationToken(userId, null, authorities);
+                                new UsernamePasswordAuthenticationToken(userId.toString(), null, authorities);
 
                         // Set additional details if needed (optional)
                         authentication.setDetails(userRole);
