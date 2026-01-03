@@ -4,6 +4,7 @@ import AuthLayout from "./pages/auth/AuthLayout";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import Dashboard from "./pages/Dashboard";
+import CreateEmployee from "./pages/employee/CreateEmployee";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/profile/Profile";
 
@@ -15,6 +16,7 @@ const AppRouter = () => {
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/employees/create" element={<CreateEmployee />} />
         </Route>
         
         {/* Default redirect to login */}
@@ -27,6 +29,16 @@ const AppRouter = () => {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Employee Routes - Protected (HR/Admin only) */}
+        <Route
+          path="/employees/create"
+          element={
+            <ProtectedRoute>
+              <CreateEmployee />
             </ProtectedRoute>
           }
         />
