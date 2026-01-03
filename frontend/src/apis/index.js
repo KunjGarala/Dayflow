@@ -131,6 +131,42 @@ export const updateCompanyAPI = async (companyData) => {
   }
 };
 
+
+export const createEmployeeAPI = async (employeeData) => {
+  try {
+    const response = await api.post('/employees/create', employeeData);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const getEmployeesAPI = async () => {
+  try {
+    const response = await api.get('/employees');
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * Get Employee by ID
+ * GET /employees/:id
+ * 
+ * @param {string} id - Employee ID
+ * @returns {Promise} Response with employee data
+ */
+export const getEmployeeByIdAPI = async (id) => {
+  try {
+    const response = await api.get(`/employees/${id}`);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // ============================================
 // EXPORT ALL APIs (Grouped by feature)
 // ============================================
@@ -151,10 +187,17 @@ export const companyAPI = {
   update: updateCompanyAPI,
 };
 
+export const employeeAPI = {
+  create: createEmployeeAPI,
+  getAll: getEmployeesAPI,
+  getById: getEmployeeByIdAPI,
+};
+
 // Default export with all APIs grouped
 export default {
   auth: authAPI,
   user: userAPI,
   company: companyAPI,
+  employee: employeeAPI,
 };
 
