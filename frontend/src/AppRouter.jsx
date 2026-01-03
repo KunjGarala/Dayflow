@@ -5,6 +5,7 @@ import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Profile from "./pages/profile/Profile";
 
 const AppRouter = () => {
   return (
@@ -18,6 +19,7 @@ const AppRouter = () => {
         
         {/* Default redirect to login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/profile" element={<Profile />} />
 
         {/* Protected Routes */}
         <Route
