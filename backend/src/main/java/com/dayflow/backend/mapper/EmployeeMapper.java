@@ -11,17 +11,7 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface EmployeeMapper {
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "employeeId", ignore = true)
-    @Mapping(target = "company", source = "hrUser.companyName")
-    @Mapping(target = "companyAvatar", source = "hrUser.companyAvatar")
-    @Mapping(target = "yearOfJoining", expression = "java(java.time.Year.now().getValue())")
-    @Mapping(target = "createdBy", source = "hrUser")
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    Employee toEntity(EmployeeCreateRequest request, HrUser hrUser);
+    Employee toEntity(EmployeeCreateRequest request);
 
-    @Mapping(target = "createdByHrName", source = "createdBy.name")
-    @Mapping(target = "createdByHrEmail", source = "createdBy.email")
     EmployeeResponse toResponse(Employee employee);
 }
