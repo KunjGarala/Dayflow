@@ -26,6 +26,8 @@ public class Employee {
     @Column(nullable = false)
     private String name;
 
+    private String password;
+
     @Column(nullable = false)
     private String jobPosition;
 
