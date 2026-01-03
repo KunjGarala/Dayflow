@@ -30,6 +30,7 @@ public class AuthService {
 
     @Transactional
     public LoginResponse authenticate(LoginRequest loginRequest, HttpServletResponse response) {
+
         String identifier = loginRequest.getIdentifier().trim();
         String password = loginRequest.getPassword();
 

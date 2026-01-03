@@ -13,5 +13,8 @@ public interface EmployeeMapper {
 
     Employee toEntity(EmployeeCreateRequest request);
 
+    @Mapping(target = "fullName", expression = "java(employee.getFirstName() + \" \" + employee.getLastName())")
+    @Mapping(target = "createdByHrName", source = "createdBy.name")
+    @Mapping(target = "createdByHrEmail", source = "createdBy.email")
     EmployeeResponse toResponse(Employee employee);
 }
