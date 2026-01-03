@@ -78,11 +78,6 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public Long extractUserId(String token) {
-        String userIdStr = extractClaim(token, claims -> claims.get("userId", String.class));
-        return userIdStr != null ? Long.parseLong(userIdStr) : null;
-    }
-
     public String extractRole(String token) {
         return extractClaim(token, claims -> claims.get("role", String.class));
     }
