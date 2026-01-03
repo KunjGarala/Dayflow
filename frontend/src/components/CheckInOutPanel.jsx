@@ -4,65 +4,82 @@ import api from "../utils/axiosInstance";
 
 /**
  * Check-In / Check-Out Panel Component
- * Shows check-in/out buttons and status indicator
+ * Status API driven
  */
 const CheckInOutPanel = () => {
   const { user } = useSelector((state) => state.auth);
-  const [isCheckedIn, setIsCheckedIn] = useState(false);
+
+  const [status, setStatus] = useState("GRAY"); // RED | GREEN | BLUE | GRAY
   const [checkInTime, setCheckInTime] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // 📥 Fetch current status
   useEffect(() => {
-    // Check if user is already checked in today
-    checkTodayStatus();
+    fetchStatus();
   }, []);
 
-  const checkTodayStatus = async () => {
+  const fetchStatus = async () => {
     try {
-      const today = new Date().toISOString().split("T")[0];
-      const response = await api.get(`/attendance/my?date=${today}`);
-      if (response.data && response.data.length > 0) {
-        const todayRecord = response.data[0];
-        if (todayRecord.checkIn) {
-          setIsCheckedIn(true);
-          setCheckInTime(todayRecord.checkIn);
+      const res = await api.get("/api/employee/attendance/status");
+
+      /*
+        Expected response example:
+        {
+          status: "GREEN",
+          checkInTime: "09:32 AM"
         }
+      */
+
+      if (res.data) {
+        setStatus(res.data.status || "GRAY");
+        setCheckInTime(res.data.checkInTime || null);
       }
-    } catch (error) {
-      console.error("Error checking status:", error);
+    } catch (err) {
+      console.error("Failed to fetch attendance status", err);
     }
   };
 
+  // 🟢 Check In
   const handleCheckIn = async () => {
     setLoading(true);
     try {
-      await api.post("/attendance/check-in");
-      const now = new Date().toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-      setIsCheckedIn(true);
-      setCheckInTime(now);
-    } catch (error) {
-      console.error("Error checking in:", error);
-      alert("Failed to check in. Please try again.");
+      await api.post("/api/employee/attendance/checkin");
+      await fetchStatus(); // refresh status
+    } catch (err) {
+      console.error("Check-in failed", err);
+      alert("Check-in failed. Try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  // 🔴 Check Out
   const handleCheckOut = async () => {
     setLoading(true);
     try {
-      await api.post("/attendance/check-out");
-      setIsCheckedIn(false);
-      setCheckInTime(null);
-    } catch (error) {
-      console.error("Error checking out:", error);
-      alert("Failed to check out. Please try again.");
+      await api.post("/api/employee/attendance/checkout");
+      await fetchStatus(); // refresh status
+    } catch (err) {
+      console.error("Check-out failed", err);
+      alert("Check-out failed. Try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  // 🎨 Status color mapping
+  const statusColor = {
+    GREEN: "bg-green-500",
+    RED: "bg-red-500",
+    BLUE: "bg-blue-500",
+    GRAY: "bg-gray-400",
+  };
+
+  const statusLabel = {
+    GREEN: "Checked In",
+    RED: "Not Checked In",
+    BLUE: "On Leave",
+    GRAY: "Absent",
   };
 
   return (
@@ -74,20 +91,20 @@ const CheckInOutPanel = () => {
       {/* Status Indicator */}
       <div className="flex items-center gap-3 mb-6">
         <div
-          className={`w-4 h-4 rounded-full ${
-            isCheckedIn ? "bg-green-500" : "bg-red-500"
-          }`}
+          className={`w-4 h-4 rounded-full ${statusColor[status]}`}
         />
         <span className="text-sm text-gray-600">
-          {isCheckedIn ? "Checked In" : "Not Checked In"}
+          {statusLabel[status]}
         </span>
       </div>
 
       {/* Check In Time */}
-      {isCheckedIn && checkInTime && (
+      {status === "GREEN" && checkInTime && (
         <div className="mb-4 p-3 bg-green-50 rounded-lg">
           <p className="text-sm text-gray-600">Check In Time</p>
-          <p className="text-lg font-semibold text-green-700">{checkInTime}</p>
+          <p className="text-lg font-semibold text-green-700">
+            {checkInTime}
+          </p>
         </div>
       )}
 
@@ -95,15 +112,16 @@ const CheckInOutPanel = () => {
       <div className="space-y-3">
         <button
           onClick={handleCheckIn}
-          disabled={loading || isCheckedIn}
-          className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={loading || status === "GREEN" || status === "BLUE"}
+          className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Check In
         </button>
+
         <button
           onClick={handleCheckOut}
-          disabled={loading || !isCheckedIn}
-          className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={loading || status !== "GREEN"}
+          className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Check Out
         </button>
@@ -113,4 +131,3 @@ const CheckInOutPanel = () => {
 };
 
 export default CheckInOutPanel;
-

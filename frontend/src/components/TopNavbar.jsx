@@ -31,6 +31,7 @@ const TopNavbar = ({
     { key: "company", label: "Company Info", path: "/company", exact: false },
     { key: "employees", label: "Employees", path: "/dashboard", exact: false },
     { key: "attendance", label: "Attendance", path: "/attendance", exact: true },
+    { key: "add-employees", label: "Add Employees", path: "/employees/create", exact: true },
     { key: "timeoff", label: "Time Off", path: "/timeoff", exact: true },
     { key: "profile", label: "Profile", path: "/profile", exact: true },
   ];
