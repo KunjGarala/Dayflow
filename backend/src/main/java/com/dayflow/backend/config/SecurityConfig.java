@@ -23,21 +23,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Value("${frontend.origin}")
-    private String frontendOrigin;
+    @Value("${frontend.origin1}")
+    private String frontendOrigin1;
+
+    @Value("${frontend.origin2}")
+    private String frontendOrigin2;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/public/**", "/api/auth/**", "/api/hr/signup", "/api/hr/login").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/hr/**").hasRole("HR")
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
@@ -48,8 +48,10 @@ public class SecurityConfig {
 
         // Allow your frontend origin
         configuration.setAllowedOrigins(Arrays.asList(
-                frontendOrigin,
-                "http://localhost:3000"
+//                frontendOrigin1,
+//                frontendOrigin2,
+//                "http://localhost:3000"
+                "*"
         ));
 
         // Allow common HTTP methods
