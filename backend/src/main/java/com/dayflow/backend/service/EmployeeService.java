@@ -10,6 +10,9 @@ import com.dayflow.backend.repository.EmployeeRepository;
 import com.dayflow.backend.repository.HrRepository;
 import com.dayflow.backend.util.EmployeeIdGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +46,10 @@ public class EmployeeService {
         }
 
         // Map request to entity
-        Employee employee = employeeMapper.toEntity(request, hrUser);
+        Employee employee = employeeMapper.toEntity(request);
+
+        employee.setCompany(hrUser.getCompanyName());
+        employee.setCompanyAvatar(hrUser.getCompanyAvatar());
 
         // Generate employee ID
         String employeeId = employeeIdGenerator.generateEmployeeId(
@@ -95,5 +101,10 @@ public class EmployeeService {
         return employees.stream()
                 .map(employeeMapper::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 }
