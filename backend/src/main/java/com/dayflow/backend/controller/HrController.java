@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/hr")
+@RequestMapping("/api/hr/")
 @RequiredArgsConstructor
 public class HrController {
 
