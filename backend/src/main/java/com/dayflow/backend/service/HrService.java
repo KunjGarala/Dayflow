@@ -7,6 +7,7 @@ import com.dayflow.backend.entity.HrUser;
 import com.dayflow.backend.exception.ApiException;
 import com.dayflow.backend.mapper.HrMapper;
 import com.dayflow.backend.repository.HrRepository;
+import com.dayflow.backend.util.FileUploadUtil;
 import com.dayflow.backend.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -23,9 +27,12 @@ public class HrService {
     private final HrMapper hrMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final FileUploadUtil fileUploadUtil;
 
     @Transactional
-    public HrSignupResponse signup(HrSignupRequest signupRequest, HttpServletResponse response) {
+    public HrSignupResponse signup(HrSignupRequest signupRequest,
+                                   MultipartFile avatar,
+                                   HttpServletResponse response) {
         // Validate passwords match
         if (!signupRequest.getPassword().equals(signupRequest.getConfirmPassword())) {
             throw new ApiException("Passwords do not match");
@@ -41,11 +48,28 @@ public class HrService {
             throw new ApiException("Phone number already registered");
         }
 
+        // Validate avatar if provided
+        String avatarUrl = null;
+        if (avatar != null && !avatar.isEmpty()) {
+
+            try {
+                // Upload avatar to S3
+                avatarUrl = fileUploadUtil.uploadImage(avatar);
+            } catch (Exception e) {
+                throw new ApiException("Failed to upload avatar: " + e.getMessage());
+            }
+        }
+
         // Map request to entity
         HrUser hrUser = hrMapper.signupRequestToEntity(signupRequest);
 
         // Encode password
         hrUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+
+        // Set avatar URL if uploaded
+        if (avatarUrl != null) {
+            hrUser.setCompanyAvatar(avatarUrl);
+        }
 
         // Save HR user
         HrUser savedHrUser = hrRepository.save(hrUser);
