@@ -13,8 +13,9 @@ import api from '../../utils/axiosInstance';
  * @returns {Promise} Response with created employee data
  */
 export const createEmployeeAPI = async (employeeData) => {
+  console.log(employeeData);
   try {
-    const response = await api.post('/employees/create', employeeData);
+    const response = await api.post('/api/hr/employees', employeeData);
     return response;
   } catch (error) {
     throw error;
@@ -23,13 +24,13 @@ export const createEmployeeAPI = async (employeeData) => {
 
 /**
  * Get All Employees
- * GET /employees
+ * GET /api/hr/employees/company/all
  * 
  * @returns {Promise} Response with employees list
  */
 export const getEmployeesAPI = async () => {
   try {
-    const response = await api.get('/employees');
+    const response = await api.get('/api/hr/employees/company/all');
     return response;
   } catch (error) {
     throw error;

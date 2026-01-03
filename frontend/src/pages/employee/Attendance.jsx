@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../utils/axiosInstance";
-import HrLayout from "../../components/HrLayout";
+import TopNavbar from "../../components/TopNavbar";
 
 /**
  * Attendance Page for HR
@@ -12,6 +12,7 @@ const Attendance = () => {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     fetchAttendance();
@@ -32,8 +33,9 @@ const Attendance = () => {
   };
 
   return (
-    <HrLayout>
-      <div className="p-6">
+    <div className="min-h-screen bg-gray-50">
+      <TopNavbar searchValue={searchValue} setSearchValue={setSearchValue} showSearch={false} />
+      <div className="max-w-7xl mx-auto p-6">
         <div className="max-w-7xl mx-auto">
           <div className="bg-white rounded-lg shadow-lg p-6">
             <div className="flex items-center justify-between mb-6">
@@ -111,7 +113,7 @@ const Attendance = () => {
           </div>
         </div>
       </div>
-    </HrLayout>
+    </div>
   );
 };
 

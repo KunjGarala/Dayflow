@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../../utils/axiosInstance";
-import HrLayout from "../../components/HrLayout";
+import TopNavbar from "../../components/TopNavbar";
 
 /**
  * TimeOff Page for HR
@@ -10,6 +10,7 @@ const TimeOff = () => {
   const [timeOffRequests, setTimeOffRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("all"); // all, pending, approved, rejected
+  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     // TODO: Fetch time off requests from API
@@ -85,9 +86,9 @@ const TimeOff = () => {
   };
 
   return (
-    <HrLayout>
-      <div className="p-6">
-        <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <TopNavbar searchValue={searchValue} setSearchValue={setSearchValue} showSearch={false} />
+      <div className="max-w-7xl mx-auto p-6">
           <div className="bg-white rounded-lg shadow-lg p-6">
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-2xl font-bold text-gray-800">Time Off Requests</h1>
@@ -239,7 +240,7 @@ const TimeOff = () => {
           </div>
         </div>
       </div>
-    </HrLayout>
+    // </div>
   );
 };
 
