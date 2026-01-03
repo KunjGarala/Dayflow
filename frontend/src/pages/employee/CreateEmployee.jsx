@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { employeeAPI } from '../../apis';
-import HrLayout from '../../components/HrLayout';
+import TopNavbar from '../../components/TopNavbar';
 
 /**
  * Create Employee Component
@@ -27,7 +27,7 @@ const CreateEmployee = () => {
     lastName: '',
     email: '',
     yearOfJoining: '',
-    mobileNumber: '',
+    mobile: '',
     department: '',
     manager: '',
     location: '',
@@ -35,6 +35,7 @@ const CreateEmployee = () => {
   });
   
   const [formErrors, setFormErrors] = useState({});
+  const [searchValue, setSearchValue] = useState("");
 
   /**
    * Handle input change
@@ -88,10 +89,10 @@ const CreateEmployee = () => {
       }
     }
     
-    if (!formData.mobileNumber.trim()) {
-      errors.mobileNumber = 'Mobile number is required';
-    } else if (!/^\d{10}$/.test(formData.mobileNumber.replace(/\D/g, ''))) {
-      errors.mobileNumber = 'Mobile number must be 10 digits';
+    if (!formData.mobile.trim()) {
+      errors.mobile = 'Mobile number is required';
+    } else if (!/^\d{10}$/.test(formData.mobile.replace(/\D/g, ''))) {
+      errors.mobile = 'Mobile number must be 10 digits';
     }
     
     if (!formData.department) {
@@ -148,7 +149,7 @@ const CreateEmployee = () => {
           lastName: '',
           email: '',
           yearOfJoining: '',
-          mobileNumber: '',
+          mobile: '',
           department: '',
           manager: '',
           location: '',
@@ -167,10 +168,11 @@ const CreateEmployee = () => {
   };
 
   return (
-    <HrLayout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 px-4 py-8">
+    <div className="min-h-screen bg-gray-50">
+      <TopNavbar searchValue={searchValue} setSearchValue={setSearchValue} showSearch={false} />
+      <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 px-4 py-8">
         <div className="max-w-4xl mx-auto">
-        {/* Header */}
+          {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Create New Employee</h1>
           <p className="text-gray-400">Fill in the employee details below</p>
@@ -275,20 +277,20 @@ const CreateEmployee = () => {
               </div>
 
               <div>
-                <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="mobile" className="block text-sm font-medium text-gray-300 mb-2">
                   Mobile Number <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="tel"
-                  id="mobileNumber"
-                  name="mobileNumber"
+                  id="mobile"
+                  name="mobile"
                   className="w-full px-4 py-3 bg-slate-700/50 border border-purple-500/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   placeholder="Enter mobile number"
-                  value={formData.mobileNumber}
+                  value={formData.mobile}
                   onChange={handleChange}
                 />
-                {formErrors.mobileNumber && (
-                  <p className="mt-2 text-sm text-red-400">{formErrors.mobileNumber}</p>
+                {formErrors.mobile && (
+                  <p className="mt-2 text-sm text-red-400">{formErrors.mobile}</p>
                 )}
               </div>
             </div>
@@ -407,7 +409,7 @@ const CreateEmployee = () => {
         </div>
         </div>
       </div>
-    </HrLayout>
+    </div>
   );
 };
 
