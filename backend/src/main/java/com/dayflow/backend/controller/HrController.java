@@ -65,9 +65,9 @@ public class HrController {
 
     @GetMapping("/employees")
     public ResponseEntity<List<EmployeeResponse>> getEmployees(
-            @AuthenticationPrincipal Long hrId) {
+            @AuthenticationPrincipal String hrEmail) {
 
-        List<EmployeeResponse> employees = employeeService.getEmployeesByHr(hrId);
+        List<EmployeeResponse> employees = employeeService.getEmployeesByHr(hrEmail);
         return ResponseEntity.ok(employees);
     }
 

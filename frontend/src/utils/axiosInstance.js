@@ -5,14 +5,14 @@ import API_BASE_URL from '../config';
  * Axios Instance Configuration
  * 
  * This instance handles:
- * - Automatic cookie handling (access token in cookie)
+ * - Automatic token handling (access token from Redux state)
  * - Automatic logout on 401 errors (token expired/invalid)
  * 
- * Access token is stored in HTTP-only cookie, sent automatically with requests
+ * Access token is stored in Redux state, sent in Authorization header
  */
 const api = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true, // Automatically sends cookies with requests
+  withCredentials: false, // Not using cookies, using Authorization header
 });
 
 // Store reference - will be set after store initialization
@@ -28,12 +28,19 @@ export const setStoreRef = (store) => {
 
 /**
  * Request Interceptor
- * Cookies are sent automatically by browser, no need to attach token manually
+ * Attaches access token from Redux store to Authorization header
  */
 api.interceptors.request.use(
   (config) => {
-    // Cookies are sent automatically with withCredentials: true
-    // No need to manually attach token to headers
+    // Get access token from Redux store
+    if (storeRef) {
+      const state = storeRef.getState();
+      const accessToken = state.auth?.accessToken;
+      
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
+    }
     return config;
   },
   (error) => {
@@ -47,12 +54,11 @@ api.interceptors.request.use(
  * 
  * Flow:
  * 1. If 401 (unauthorized), logout user and redirect to login
- * 2. Cookie is handled automatically by browser
+ * 2. Clears access token from Redux state
  */
 api.interceptors.response.use(
   (response) => {
     // Successful response - return as is
-    // Cookie is handled automatically by browser
     return response;
   },
   async (error) => {

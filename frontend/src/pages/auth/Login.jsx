@@ -17,7 +17,7 @@ const Login = () => {
   
   // Form state
   const [formData, setFormData] = useState({
-    email: '',
+    identifier: '',
     password: '',
   });
   
@@ -62,10 +62,10 @@ const Login = () => {
   const validateForm = () => {
     const errors = {};
     
-    if (!formData.email.trim()) {
-      errors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      errors.email = 'Email is invalid';
+    if (!formData.identifier.trim()) {
+      errors.identifier = 'Login ID / Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.identifier)) {
+      errors.identifier = 'Email is invalid';
     }
     
     if (!formData.password) {
@@ -104,6 +104,7 @@ const Login = () => {
     // Dispatch login action
     try {
       const result = await dispatch(loginUser(formData));
+      console.log(result);
       
       // If login successful, navigate to dashboard
       if (loginUser.fulfilled.match(result)) {
@@ -137,22 +138,22 @@ const Login = () => {
       
       {/* Login Form */}
       <form className="space-y-6" onSubmit={handleSubmit}>
-        {/* Email Input */}
+        {/* Identifier Input */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+          <label htmlFor="identifier" className="block text-sm font-medium text-gray-300 mb-2">
             Login ID / Email
           </label>
           <input
             type="email"
-            id="email"
-            name="email"
+            id="identifier"
+            name="identifier"
             className="w-full px-4 py-3 bg-slate-700/50 border border-purple-500/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
             placeholder="Enter your email"
-            value={formData.email}
+            value={formData.identifier}
             onChange={handleChange}
           />
-          {formErrors.email && (
-            <p className="mt-2 text-sm text-red-400">{formErrors.email}</p>
+          {formErrors.identifier && (
+            <p className="mt-2 text-sm text-red-400">{formErrors.identifier}</p>
           )}
         </div>
         
