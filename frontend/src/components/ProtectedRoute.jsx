@@ -1,10 +1,16 @@
 // src/components/ProtectedRoute.jsx
 import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
+/**
+ * ProtectedRoute Component
+ * Protects routes that require authentication
+ * Uses Redux auth state (access token is in HTTP-only cookie)
+ */
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token"); // JWT or session token
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
-  if (!token) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
