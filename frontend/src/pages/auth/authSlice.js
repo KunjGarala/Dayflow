@@ -5,12 +5,12 @@ import { login, signup, logout } from './authService';
  * Async thunk for user login
  * 
  * Backend behavior:
- * - Sets access token in HTTP-only cookie
+ * - Returns accessToken in response body
  * - Returns user data in response body
  * 
  * Frontend behavior:
- * - Token is stored in cookie (handled by browser)
- * - Only stores user data and auth state in Redux
+ * - Stores accessToken in Redux state
+ * - Stores user data in Redux state
  */
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
@@ -18,8 +18,9 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await login(credentials);
       
-      // Backend returns user data, token is in cookie
+      // Backend returns accessToken and user data
       return {
+        accessToken: response.data.accessToken,
         user: response.data.user,
       };
     } catch (error) {
@@ -53,7 +54,8 @@ export const signupUser = createAsyncThunk(
  * 
  * Frontend behavior:
  * - Clears Redux auth state
- * - Backend clears cookie
+ * - Clears localStorage
+ * - Calls logout API endpoint
  * - Redirects to login
  */
 export const logoutUser = createAsyncThunk(
@@ -69,14 +71,34 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
-// Initial state
-// Access token is in cookie, not stored in Redux
-const initialState = {
-  user: null,
-  isAuthenticated: false,
-  loading: false,
-  error: null,
+// Load initial state from localStorage
+const loadInitialState = () => {
+  try {
+    const accessToken = localStorage.getItem('accessToken');
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    
+    return {
+      accessToken,
+      user,
+      isAuthenticated: !!accessToken && !!user,
+      loading: false,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      accessToken: null,
+      user: null,
+      isAuthenticated: false,
+      loading: false,
+      error: null,
+    };
+  }
 };
+
+// Initial state
+// Access token is stored in Redux state and localStorage
+const initialState = loadInitialState();
 
 // Auth slice
 const authSlice = createSlice({
@@ -100,16 +122,26 @@ const authSlice = createSlice({
       // Login fulfilled
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
+        state.accessToken = action.payload.accessToken;
         state.user = action.payload.user;
         state.isAuthenticated = true;
         state.error = null;
+        
+        // Persist to localStorage
+        localStorage.setItem('accessToken', action.payload.accessToken);
+        localStorage.setItem('user', JSON.stringify(action.payload.user));
       })
       // Login rejected
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.isAuthenticated = false;
+        state.accessToken = null;
         state.user = null;
+        
+        // Clear localStorage
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('user');
       })
       // Signup pending
       .addCase(signupUser.pending, (state) => {
@@ -133,17 +165,27 @@ const authSlice = createSlice({
       // Logout fulfilled
       .addCase(logoutUser.fulfilled, (state) => {
         state.loading = false;
+        state.accessToken = null;
         state.user = null;
         state.isAuthenticated = false;
         state.error = null;
+        
+        // Clear localStorage
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('user');
       })
       // Logout rejected
       .addCase(logoutUser.rejected, (state) => {
         // Clear state even if logout API call failed
         state.loading = false;
+        state.accessToken = null;
         state.user = null;
         state.isAuthenticated = false;
         state.error = null;
+        
+        // Clear localStorage
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('user');
       });
   },
 });

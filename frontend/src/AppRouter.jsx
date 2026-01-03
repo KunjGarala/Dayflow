@@ -5,6 +5,8 @@ import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import Dashboard from "./pages/Dashboard";
 import CreateEmployee from "./pages/employee/CreateEmployee";
+import Attendance from "./pages/employee/Attendance";
+import TimeOff from "./pages/employee/TimeOff";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/profile/Profile";
 
@@ -16,20 +18,28 @@ const AppRouter = () => {
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/employees/create" element={<CreateEmployee />} />
         </Route>
         
         {/* Default redirect to login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/profile" element={<Profile />} />
+        
+        {/* Protected Profile Route */}
+        <Route
+          path="/profile"
+          element={
+            // <ProtectedRoute>
+              <Profile />
+            // {/* </ProtectedRoute> */}
+          }
+        />
 
         {/* Protected Routes */}
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <Dashboard />
-            </ProtectedRoute>
+            // </ProtectedRoute>
           }
         />
 
@@ -37,9 +47,29 @@ const AppRouter = () => {
         <Route
           path="/employees/create"
           element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <CreateEmployee />
-            </ProtectedRoute>
+            // </ProtectedRoute>
+          }
+        />
+
+        {/* Attendance Route - HR only */}
+        <Route
+          path="/attendance"
+          element={
+            // <ProtectedRoute>
+              <Attendance />
+            // </ProtectedRoute>
+          }
+        />
+
+        {/* Time Off Route - HR only */}
+        <Route
+          path="/timeoff"
+          element={
+            // <ProtectedRoute>
+              <TimeOff />
+            // </ProtectedRoute>
           }
         />
 

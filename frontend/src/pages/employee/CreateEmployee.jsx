@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { employeeAPI } from '../../apis';
+import HrLayout from '../../components/HrLayout';
 
 /**
  * Create Employee Component
@@ -166,8 +167,9 @@ const CreateEmployee = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 px-4 py-8">
-      <div className="max-w-4xl mx-auto">
+    <HrLayout>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 px-4 py-8">
+        <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Create New Employee</h1>
@@ -403,8 +405,9 @@ const CreateEmployee = () => {
             </div>
           </form>
         </div>
+        </div>
       </div>
-    </div>
+    </HrLayout>
   );
 };
 
