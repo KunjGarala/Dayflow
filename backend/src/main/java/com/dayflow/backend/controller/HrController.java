@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,13 +28,22 @@ public class HrController {
     private final HrService hrService;
     private final EmployeeService employeeService;
 
-    @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<HrSignupResponse> signup(
+    @PostMapping(value = "/signup/wfile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<HrSignupResponse> signupWithFile(
             @RequestPart("data") @Valid HrSignupRequest signupRequest,
             @RequestPart(value = "avatar", required = false) MultipartFile avatar,
             HttpServletResponse response) {
 
         HrSignupResponse signupResponse = hrService.signup(signupRequest, avatar, response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(signupResponse);
+    }
+
+    @PostMapping(value = "/signup/wofile")
+    public ResponseEntity<HrSignupResponse> signupWithoutFile(
+            @RequestBody @Valid HrSignupRequest signupRequest,
+            HttpServletResponse response) {
+
+        HrSignupResponse signupResponse = hrService.signup(signupRequest, null, response);
         return ResponseEntity.status(HttpStatus.CREATED).body(signupResponse);
     }
 
@@ -48,8 +58,7 @@ public class HrController {
     @PostMapping("/employees")
     public ResponseEntity<EmployeeResponse> createEmployee(
             @Valid @RequestBody EmployeeCreateRequest request,
-            @AuthenticationPrincipal Long hrId) {
-
+            @AuthenticationPrincipal String hrId) {
         EmployeeResponse response = employeeService.createEmployee(request, hrId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

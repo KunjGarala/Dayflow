@@ -11,6 +11,7 @@ import com.dayflow.backend.repository.HrRepository;
 import com.dayflow.backend.util.EmployeeIdGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,9 +31,13 @@ public class EmployeeService {
     private final EmployeeIdGenerator employeeIdGenerator;
 
     @Transactional
-    public EmployeeResponse createEmployee(EmployeeCreateRequest request, Long hrId) {
+    public EmployeeResponse createEmployee(EmployeeCreateRequest request, String hrId) {
+
+        String idid = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        System.out.println(idid);
         // Fetch HR who is creating the employee
-        HrUser hrUser = hrRepository.findById(hrId)
+        HrUser hrUser = hrRepository.findByEmail(idid)
                 .orElseThrow(() -> new ApiException("HR user not found"));
 
         // Check if email already exists
@@ -50,11 +55,14 @@ public class EmployeeService {
 
         employee.setCompany(hrUser.getCompanyName());
         employee.setCompanyAvatar(hrUser.getCompanyAvatar());
+        employee.setCreatedBy(hrUser);
+        employee.setFirstName(request.getFirstName());
+        employee.setLastName(request.getLastName());
 
         // Generate employee ID
         String employeeId = employeeIdGenerator.generateEmployeeId(
                 hrUser.getCompanyName(),
-                request.getName(),
+                request.getFirstName(),
                 Year.now().getValue()
         );
         employee.setEmployeeId(employeeId);
